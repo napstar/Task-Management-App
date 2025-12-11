@@ -1,0 +1,6 @@
+@SwmcolTaskTracker.API_HostAddress = http://localhost:5157
+
+GET {{SwmcolTaskTracker.API_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###

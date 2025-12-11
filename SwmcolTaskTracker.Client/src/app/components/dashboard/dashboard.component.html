@@ -1,0 +1,103 @@
+<div class="p-6 bg-gray-50 min-h-screen space-y-8">
+
+    <h1 class="text-3xl font-bold text-gray-800">Dashboard</h1>
+
+    <!-- Top Row: Stats Cards -->
+    <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+        <!-- Total -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Total Tasks</p>
+                <p class="text-3xl font-bold text-gray-900">{{ totalTasks }}</p>
+            </div>
+            <div class="bg-blue-100 p-3 rounded-full text-blue-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M3.75 6.75h16.5M3.75 12h16.5m-16.5 5.25H12" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Pending -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Pending</p>
+                <p class="text-3xl font-bold text-yellow-600">{{ pendingTasks }}</p>
+            </div>
+            <div class="bg-yellow-100 p-3 rounded-full text-yellow-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 6v6h4.5m4.5 0a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Blocked (High Attention) -->
+        <div class="bg-red-50 p-6 rounded-xl shadow-sm border border-red-200 flex items-center justify-between">
+            <div>
+                <p class="text-sm font-bold text-red-600">Blocked</p>
+                <p class="text-3xl font-bold text-red-700">{{ blockedTasks }}</p>
+            </div>
+            <div class="bg-red-200 p-3 rounded-full text-red-700">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M12 9v3.75m9-.75a9 9 0 11-18 0 9 9 0 0118 0zm-9 3.75h.008v.008H12v-.008z" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- Completed -->
+        <div class="bg-white p-6 rounded-xl shadow-sm border border-gray-100 flex items-center justify-between">
+            <div>
+                <p class="text-sm font-medium text-gray-500">Completed</p>
+                <p class="text-3xl font-bold text-green-600">{{ completedTasks }}</p>
+            </div>
+            <div class="bg-green-100 p-3 rounded-full text-green-600">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M9 12.75L11.25 15 15 9.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+            </div>
+        </div>
+    </div>
+
+    <!-- Middle Row: Charts -->
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <!-- Status Chart -->
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Task Status Distribution</h2>
+            <div class="h-64 flex justify-center">
+                <canvas baseChart [data]="statusPieChartData" [type]="'pie'" [options]="chartOptions">
+                </canvas>
+            </div>
+        </div>
+
+        <!-- Project Chart -->
+        <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+            <h2 class="text-lg font-semibold text-gray-700 mb-4">Tasks by Project</h2>
+            <div class="h-64">
+                <canvas baseChart [data]="projectBarChartData" [type]="'bar'" [options]="chartOptions">
+                </canvas>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bottom Row: Task List -->
+    <div class="bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+        <h2 class="text-lg font-semibold text-gray-700 mb-4">All Tasks</h2>
+
+        <!-- Placeholder or Component -->
+        <div
+            class="border-2 border-dashed border-gray-300 rounded-lg h-64 flex items-center justify-center text-gray-400">
+            <!-- <app-task-list></app-task-list> -->
+            <p class="text-center">
+                Task List Component Grid (To be implemented or uncommented if exists)
+            </p>
+        </div>
+    </div>
+
+</div>

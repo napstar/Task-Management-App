@@ -1,0 +1,18 @@
+<div class="h-full flex flex-col space-y-4">
+    <div class="flex justify-between items-center">
+        <h1 class="text-2xl font-bold text-gray-800">My Tasks</h1>
+        <a routerLink="/tasks/create"
+            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition shadow">
+            + New Task
+        </a>
+    </div>
+
+    <!-- AG Grid Container -->
+    <!-- Note: Ensure ag-theme-quartz or ag-theme-alpine is loaded in styles.css -->
+    <div class="flex-1 w-full h-[600px]">
+        <ag-grid-angular class="ag-theme-quartz w-full h-full" [rowData]="tasks" [columnDefs]="colDefs"
+            [defaultColDef]="defaultColDef" [pagination]="true" [paginationPageSize]="10"
+            [paginationPageSizeSelector]="[10, 20, 50, 100]" [context]="context" (gridReady)="onGridReady($event)">
+        </ag-grid-angular>
+    </div>
+</div>

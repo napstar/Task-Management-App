@@ -4,8 +4,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SwmcolTaskTracker.API.Data;
-using SwmcolTaskTracker.API.Models;
+using SwmcolTaskTracker.Shared.Data;
+using SwmcolTaskTracker.Shared.Models;
 
 namespace SwmcolTaskTracker.API.Controllers
 {
@@ -81,7 +81,7 @@ namespace SwmcolTaskTracker.API.Controllers
             entry.Property(e => e.CreatedAt).IsModified = false;
             entry.Property(e => e.CreatedBy_AD_OID).IsModified = false;
 
-            // If you have more fields that should never update:
+            // Placeholder - reading file firstelds that should never update:
             // entry.Property(e => e.OtherField).IsModified = false;
 
             try

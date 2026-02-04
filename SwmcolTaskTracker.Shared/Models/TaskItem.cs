@@ -3,7 +3,7 @@ using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SwmcolTaskTracker.API.Models
+namespace SwmcolTaskTracker.Shared.Models
 {
     [Table("Tasks")]
     public class TaskItem
@@ -34,6 +34,9 @@ namespace SwmcolTaskTracker.API.Models
         public DateTime? CompletedDate { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
+        [Column("ProjectID")]
+        public int? ProjectId { get; set; }
 
         // Navigation Properties
         public ICollection<TaskDependency> Dependencies { get; set; } = new List<TaskDependency>();

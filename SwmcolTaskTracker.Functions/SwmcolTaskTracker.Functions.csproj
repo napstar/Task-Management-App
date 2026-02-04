@@ -18,7 +18,7 @@
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\SwmcolTaskTracker.API\SwmcolTaskTracker.API.csproj" />
+    <ProjectReference Include="..\SwmcolTaskTracker.Shared\SwmcolTaskTracker.Shared.csproj" />
   </ItemGroup>
   <ItemGroup>
     <None Update="templates\**">

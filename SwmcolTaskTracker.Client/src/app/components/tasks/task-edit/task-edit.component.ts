@@ -37,16 +37,18 @@ export class TaskEditComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.taskId = Number(id);
 
+    // Load projects first, then load task inside the subscription
     this.loadProjects();
-
-    if (this.taskId) {
-      this.loadTask(this.taskId);
-    }
   }
 
   loadProjects(): void {
     this.taskService.getProjects().subscribe({
-      next: (data) => this.projects = data,
+      next: (data) => {
+        this.projects = data;
+        if (this.taskId) {
+          this.loadTask(this.taskId);
+        }
+      },
       error: (err) => console.error('Failed to load projects', err)
     });
   }
@@ -55,28 +57,27 @@ export class TaskEditComponent implements OnInit {
     this.taskService.getTaskById(id).subscribe({
       next: (task) => {
         // Patch form with task data
-        // Note: Ensure project matching works (might need explicit project lookup if projectName is minimal)
-        // Assuming task has projectId or projectName. The model currently has 'projectName'.
-        // If the model doesn't have projectId, we might need to find the project by name or rely on backend.
-        // However, the dropdown usually binds to ID. 
-        // Let's assume for now we might need to augment the task model or map it.
-        // The task model in view_file showed 'projectName' but not 'projectId'. 
-        // We'll need to match project name to ID if the form controls projectId.
-        // Or simplified: bind 'projectName' if the select works that way.
+        console.log('Task loaded:', task);
 
-        // Correction: The create form used 'projectId'. The Task model has 'projectName'.
-        // This is a disconnect. I should check how create form worked.
-        // In create form: projectId: [null, Validators.required].
-        // The Task model: projectName?: string.
-        // This suggests the API might take projectId on POST but return Name on GET?
-        // I will try to map it.
+        // Handle potential casing issues (ProjectID vs projectId) or missing ID
+        // The API might return projectID (capital ID) or projectId depending on serialization
+        let pId = (task as any).projectID || task.projectId; // Try both casings
 
-        const project = this.projects.find(p => p.projectName === task.projectName);
+        // Fallback: If no ID found on task, try to match by name (legacy support or if ID is null)
+        if (!pId && task.projectName) {
+          const tName = task.projectName;
+          console.log("No ProjectID found on task, searching by name:", tName);
+          const match = this.projects.find(p => p.projectName && p.projectName.toLowerCase() === tName.toLowerCase());
+          if (match) {
+            pId = match.projectId;
+            console.log("Matched project by name:", match);
+          }
+        }
 
         this.editForm.patchValue({
           taskId: task.taskId,
           title: task.title,
-          projectId: project ? project.projectId : null,
+          projectId: pId,
           description: task.description,
           status: task.status,
           dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : null,
@@ -100,8 +101,11 @@ export class TaskEditComponent implements OnInit {
       const updatePayload: any = {
         ...formValue,
         projectName: selectedProject?.projectName,
-        taskId: this.taskId
+        taskId: this.taskId,
+        ProjectID: formValue.projectId // Ensure we send the ID to the backend property
       };
+
+      console.log("Updating task with payload:", updatePayload);
 
       this.taskService.updateTask(this.taskId, updatePayload).subscribe({
         next: () => {

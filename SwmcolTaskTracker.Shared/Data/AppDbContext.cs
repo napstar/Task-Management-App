@@ -1,7 +1,7 @@
 using Microsoft.EntityFrameworkCore;
-using SwmcolTaskTracker.API.Models;
+using SwmcolTaskTracker.Shared.Models;
 
-namespace SwmcolTaskTracker.API.Data
+namespace SwmcolTaskTracker.Shared.Data
 {
     public class AppDbContext : DbContext
     {

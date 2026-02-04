@@ -1,7 +1,7 @@
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
-namespace SwmcolTaskTracker.API.Models
+namespace SwmcolTaskTracker.Shared.Models
 {
     public class Project
     {

@@ -5,14 +5,14 @@ using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
 using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
-using SwmcolTaskTracker.API.Data;
+using SwmcolTaskTracker.Shared.Data;
 
 #nullable disable
 
 namespace SwmcolTaskTracker.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20251210152128_InitialCreate")]
+    [Migration("20260204153033_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -25,7 +25,29 @@ namespace SwmcolTaskTracker.API.Migrations
 
             SqlServerModelBuilderExtensions.UseIdentityColumns(modelBuilder);
 
-            modelBuilder.Entity("SwmcolTaskTracker.API.Models.TaskComment", b =>
+            modelBuilder.Entity("SwmcolTaskTracker.Shared.Models.Project", b =>
+                {
+                    b.Property<int>("ProjectId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("ProjectId"));
+
+                    b.Property<string>("Description")
+                        .HasMaxLength(500)
+                        .HasColumnType("nvarchar(500)");
+
+                    b.Property<string>("ProjectName")
+                        .IsRequired()
+                        .HasMaxLength(100)
+                        .HasColumnType("nvarchar(100)");
+
+                    b.HasKey("ProjectId");
+
+                    b.ToTable("Projects");
+                });
+
+            modelBuilder.Entity("SwmcolTaskTracker.Shared.Models.TaskComment", b =>
                 {
                     b.Property<int>("CommentId")
                         .ValueGeneratedOnAdd()
@@ -53,7 +75,7 @@ namespace SwmcolTaskTracker.API.Migrations
                     b.ToTable("TaskComments");
                 });
 
-            modelBuilder.Entity("SwmcolTaskTracker.API.Models.TaskDependency", b =>
+            modelBuilder.Entity("SwmcolTaskTracker.Shared.Models.TaskDependency", b =>
                 {
                     b.Property<int>("DependencyId")
                         .ValueGeneratedOnAdd()
@@ -82,7 +104,7 @@ namespace SwmcolTaskTracker.API.Migrations
                     b.ToTable("TaskDependencies");
                 });
 
-            modelBuilder.Entity("SwmcolTaskTracker.API.Models.TaskItem", b =>
+            modelBuilder.Entity("SwmcolTaskTracker.Shared.Models.TaskItem", b =>
                 {
                     b.Property<int>("TaskId")
                         .ValueGeneratedOnAdd()
@@ -127,9 +149,9 @@ namespace SwmcolTaskTracker.API.Migrations
                     b.ToTable("Tasks");
                 });
 
-            modelBuilder.Entity("SwmcolTaskTracker.API.Models.TaskComment", b =>
+            modelBuilder.Entity("SwmcolTaskTracker.Shared.Models.TaskComment", b =>
                 {
-                    b.HasOne("SwmcolTaskTracker.API.Models.TaskItem", "Task")
+                    b.HasOne("SwmcolTaskTracker.Shared.Models.TaskItem", "Task")
                         .WithMany("Comments")
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -138,9 +160,9 @@ namespace SwmcolTaskTracker.API.Migrations
                     b.Navigation("Task");
                 });
 
-            modelBuilder.Entity("SwmcolTaskTracker.API.Models.TaskDependency", b =>
+            modelBuilder.Entity("SwmcolTaskTracker.Shared.Models.TaskDependency", b =>
                 {
-                    b.HasOne("SwmcolTaskTracker.API.Models.TaskItem", "Task")
+                    b.HasOne("SwmcolTaskTracker.Shared.Models.TaskItem", "Task")
                         .WithMany("Dependencies")
                         .HasForeignKey("TaskId")
                         .OnDelete(DeleteBehavior.Cascade)
@@ -149,7 +171,7 @@ namespace SwmcolTaskTracker.API.Migrations
                     b.Navigation("Task");
                 });
 
-            modelBuilder.Entity("SwmcolTaskTracker.API.Models.TaskItem", b =>
+            modelBuilder.Entity("SwmcolTaskTracker.Shared.Models.TaskItem", b =>
                 {
                     b.Navigation("Comments");
 

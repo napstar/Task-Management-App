@@ -3,8 +3,8 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
-using SwmcolTaskTracker.API.Data;
-using SwmcolTaskTracker.API.Models;
+using SwmcolTaskTracker.Shared.Data;
+using SwmcolTaskTracker.Shared.Models;
 
 namespace SwmcolTaskTracker.API.Controllers
 {

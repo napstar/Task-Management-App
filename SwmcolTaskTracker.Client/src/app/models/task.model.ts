@@ -24,6 +24,7 @@ export interface Task {
     startDate?: Date;
     dueDate?: Date;
     completedDate?: Date;
+    projectId?: number;
     createdAt: Date; // Has default in SQL, likely always present on read
 
     // Nested properties not in SQL table

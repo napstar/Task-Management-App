@@ -2,7 +2,9 @@ import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router, ActivatedRoute, RouterModule } from '@angular/router';
-import { TaskService, Project } from '../../../services/task.service';
+import { TaskService } from '../../../services/task.service';
+import { ProjectService } from '../../../services/project.service';
+import { Project } from '../../../models/project.model';
 
 @Component({
   selector: 'app-task-edit',
@@ -14,6 +16,7 @@ import { TaskService, Project } from '../../../services/task.service';
 export class TaskEditComponent implements OnInit {
   private fb = inject(FormBuilder);
   private taskService = inject(TaskService);
+  private projectService = inject(ProjectService);
   private router = inject(Router);
   private route = inject(ActivatedRoute);
 
@@ -29,6 +32,7 @@ export class TaskEditComponent implements OnInit {
       description: [''],
       status: ['ToDo', Validators.required],
       dueDate: [null],
+      completedDate: [null],
       createdBy_AD_OID: [''] // Maintain original creator
     });
   }
@@ -37,12 +41,29 @@ export class TaskEditComponent implements OnInit {
     const id = this.route.snapshot.paramMap.get('id');
     this.taskId = Number(id);
 
+    // Setup dynamic validation for completedDate based on status
+    this.setupValidation();
+
     // Load projects first, then load task inside the subscription
     this.loadProjects();
   }
 
+  setupValidation(): void {
+    const statusControl = this.editForm.get('status');
+    const completedDateControl = this.editForm.get('completedDate');
+
+    statusControl?.valueChanges.subscribe(status => {
+      if (status === 'Completed') {
+        completedDateControl?.setValidators([Validators.required]);
+      } else {
+        completedDateControl?.clearValidators();
+      }
+      completedDateControl?.updateValueAndValidity();
+    });
+  }
+
   loadProjects(): void {
-    this.taskService.getProjects().subscribe({
+    this.projectService.getProjects().subscribe({
       next: (data) => {
         this.projects = data;
         if (this.taskId) {
@@ -81,6 +102,7 @@ export class TaskEditComponent implements OnInit {
           description: task.description,
           status: task.status,
           dueDate: task.dueDate ? new Date(task.dueDate).toISOString().split('T')[0] : null,
+          completedDate: task.completedDate ? new Date(task.completedDate).toISOString().split('T')[0] : null,
           createdBy_AD_OID: task.createdByAdOid
         });
       },

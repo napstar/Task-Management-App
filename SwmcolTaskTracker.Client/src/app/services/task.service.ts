@@ -5,12 +5,6 @@ import { catchError, tap } from 'rxjs/operators';
 import { Task } from '../models/task.model';
 import { environment } from '../../environments/environment';
 
-export interface Project {
-    projectId: number;
-    projectName: string;
-    description?: string;
-}
-
 @Injectable({
     providedIn: 'root'
 })
@@ -19,13 +13,11 @@ export class TaskService {
     private http = inject(HttpClient);
 
     private apiUrl = `${environment.apiUrl}/tasks`;
-    private projectsUrl = `${environment.apiUrl}/projects`;
 
     private tasksSubject = new BehaviorSubject<Task[]>([]);
     tasks$ = this.tasksSubject.asObservable();
 
     constructor() {
-        console.log("projectsUrl:", this.projectsUrl);
         console.log("apiUrl:", this.apiUrl);
         this.loadTasks();
     }
@@ -61,21 +53,6 @@ export class TaskService {
 
     getTasks(): Observable<Task[]> {
         return this.tasks$;
-    }
-
-    // -------------------------------------------------------
-    // GET PROJECTS FROM API
-    // -------------------------------------------------------
-    getProjects(): Observable<Project[]> {
-        return this.http.get<Project[]>(this.projectsUrl).pipe(
-            tap(projects => {
-                console.log("✔ Successfully loaded projects:", projects);
-            }),
-            catchError(err => {
-                console.error("❌ Error loading projects:", err);
-                return throwError(() => err);
-            })
-        );
     }
 
     // -------------------------------------------------------

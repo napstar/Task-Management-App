@@ -4,6 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Authorization;
 using SwmcolTaskTracker.Shared.Data;
 using SwmcolTaskTracker.Shared.Models;
 
@@ -11,23 +12,39 @@ namespace SwmcolTaskTracker.API.Controllers
 {
     [Route("api/[controller]")]
     [ApiController]
+    [Authorize]
     public class TasksController : ControllerBase
     {
         private readonly AppDbContext _context;
+        private readonly ILogger<TasksController> _logger; // Added logger field
 
-        public TasksController(AppDbContext context)
+        public TasksController(AppDbContext context, ILogger<TasksController> logger) // Modified constructor
         {
             _context = context;
+            _logger = logger; // Assigned logger
         }
 
         // GET: api/Tasks
         [HttpGet]
+        [AllowAnonymous] // Add this for testing
+[ProducesResponseType(StatusCodes.Status200OK)]
+[ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()
         {
-            return await _context.Tasks
-                
-                .OrderByDescending(t => t.CreatedAt)
-                .ToListAsync();
+            try
+            {
+                var tasks = await _context.Tasks
+                    .AsNoTracking()
+                    .OrderByDescending(t => t.CreatedAt)
+                    .ToListAsync();
+
+                return Ok(tasks);
+            }
+            catch (Exception ex)
+            {
+                _logger.LogError(ex, "Error retrieving tasks");
+                return StatusCode(500, new { message = ex.Message, inner = ex.InnerException?.Message });
+            }
         }
 
         // GET: api/Tasks/5

@@ -3,13 +3,26 @@ import { HttpClient } from '@angular/common/http';
 import { Observable } from 'rxjs';
 import { map } from 'rxjs/operators';
 import { UserRoleAssignment } from '../models/user.models';
+import { MsalService } from '@azure/msal-angular';
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
     private http = inject(HttpClient);
-    private apiUrl = 'api/users'; // Base API URL, typically configured in environment
+    private msalService = inject(MsalService);
+    private apiUrl = 'api/users'; // Base API URL
+
+    /**
+     * Retrieves the currently logged-in user account from MSAL.
+     */
+    getCurrentUser() {
+        const accounts = this.msalService.instance.getAllAccounts();
+        if (accounts.length > 0) {
+            return accounts[0];
+        }
+        return null;
+    }
 
     /**
      * Retrieves the role names for a specific user based on their AD OID.
@@ -23,3 +36,4 @@ export class UserService {
         );
     }
 }
+

@@ -1,0 +1,55 @@
+<div class="max-w-3xl mx-auto bg-white p-8 rounded-xl shadow-lg border border-gray-100 mt-10">
+    <h2 class="text-2xl font-bold text-gray-800 mb-6">Create New Project</h2>
+
+    <form [formGroup]="createForm" (ngSubmit)="onSubmit()" class="space-y-6">
+
+        <!-- Project Name -->
+        <div>
+            <label for="projectName" class="block text-sm font-medium text-gray-700">Project Name <span
+                    class="text-red-500">*</span></label>
+            <input type="text" id="projectName" formControlName="projectName" placeholder="e.g. Website Redesign"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border">
+            <div *ngIf="createForm.get('projectName')?.invalid && createForm.get('projectName')?.touched"
+                class="text-red-500 text-xs mt-1">
+                Project Name is required (min 3 chars).
+            </div>
+        </div>
+
+        <!-- Description -->
+        <div>
+            <label for="description" class="block text-sm font-medium text-gray-700">Description</label>
+            <textarea id="description" formControlName="description" rows="4"
+                placeholder="Briefly describe the project..."
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border"></textarea>
+        </div>
+
+        <!-- Project Lead AD OID -->
+        <div>
+            <label for="projectLeadAdOid" class="block text-sm font-medium text-gray-700">Project Lead (AD Object
+                ID)</label>
+            <input type="text" id="projectLeadAdOid" formControlName="projectLeadAdOid"
+                placeholder="Optional AD Object ID"
+                class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-3 border">
+        </div>
+
+        <!-- Is Active -->
+        <div class="flex items-center">
+            <input id="isActive" type="checkbox" formControlName="isActive"
+                class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+            <label for="isActive" class="ml-2 block text-sm text-gray-900">Active Project</label>
+        </div>
+
+        <!-- Actions -->
+        <div class="pt-4 flex justify-end space-x-3">
+            <button type="button" routerLink="/projects"
+                class="px-4 py-2 bg-gray-200 text-gray-700 rounded-md hover:bg-gray-300 transition">
+                Cancel
+            </button>
+            <button type="submit" [disabled]="createForm.invalid"
+                class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 disabled:opacity-50 transition">
+                Create Project
+            </button>
+        </div>
+
+    </form>
+</div>

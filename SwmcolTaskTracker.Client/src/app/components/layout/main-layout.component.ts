@@ -11,8 +11,13 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 })
 export class MainLayoutComponent {
     isTasksMenuOpen = true; // Default open for visibility/convenience
+    isProjectsMenuOpen = true;
 
     toggleTasksMenu() {
         this.isTasksMenuOpen = !this.isTasksMenuOpen;
+    }
+
+    toggleProjectsMenu() {
+        this.isProjectsMenuOpen = !this.isProjectsMenuOpen;
     }
 }

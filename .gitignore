@@ -25,3 +25,12 @@ Thumbs.db
 # Temporary files
 *.tmp
 build_log.txt
+
+publish-api/
+publish-functions/
+*.zip
+logs_temp/
+api_logs.zip
+api-deploy*.zip
+functions-deploy.zip
+

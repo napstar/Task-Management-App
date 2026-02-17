@@ -4,6 +4,8 @@ import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angula
 import { Router, RouterModule } from '@angular/router';
 import { ProjectService } from '../../../services/project.service';
 
+import { MsalService } from '@azure/msal-angular';
+
 @Component({
     selector: 'app-create-project',
     standalone: true,
@@ -15,6 +17,7 @@ export class CreateProjectComponent {
     private fb = inject(FormBuilder);
     private projectService = inject(ProjectService);
     private router = inject(Router);
+    private authService = inject(MsalService);
 
     createForm: FormGroup;
 
@@ -29,7 +32,15 @@ export class CreateProjectComponent {
 
     onSubmit(): void {
         if (this.createForm.valid) {
-            this.projectService.createProject(this.createForm.value).subscribe({
+            const projectData = this.createForm.value;
+
+            // Set Current User Email as Project Lead
+            const account = this.authService.instance.getActiveAccount();
+            if (account?.username) {
+                projectData.projectLeadAdOid = account.username;
+            }
+
+            this.projectService.createProject(projectData).subscribe({
                 next: () => {
                     this.router.navigate(['/projects']);
                 },

@@ -26,7 +26,7 @@ namespace SwmcolTaskTracker.API.Controllers
 
         // GET: api/Tasks
         [HttpGet]
-        [AllowAnonymous] // Add this for testing
+
 [ProducesResponseType(StatusCodes.Status200OK)]
 [ProducesResponseType(StatusCodes.Status500InternalServerError)]
         public async Task<ActionResult<IEnumerable<TaskItem>>> GetTasks()

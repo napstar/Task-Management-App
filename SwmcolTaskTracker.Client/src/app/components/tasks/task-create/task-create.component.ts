@@ -1,4 +1,5 @@
 import { Component, OnInit, inject } from '@angular/core';
+import { MsalService } from '@azure/msal-angular';
 import { CommonModule } from '@angular/common';
 import { FormBuilder, FormGroup, Validators, ReactiveFormsModule } from '@angular/forms';
 import { Router } from '@angular/router';
@@ -18,6 +19,7 @@ export class TaskCreateComponent implements OnInit {
     private taskService = inject(TaskService);
     private projectService = inject(ProjectService);
     private router = inject(Router);
+    private authService = inject(MsalService);
 
     createForm: FormGroup;
     projects: Project[] = [];
@@ -28,7 +30,7 @@ export class TaskCreateComponent implements OnInit {
             projectId: [null, Validators.required],
             description: [''],
             status: ['ToDo', Validators.required],
-            dueDate: [null],
+            dueDate: [null, Validators.required],
             completedDate: [null]
         });
     }
@@ -54,7 +56,15 @@ export class TaskCreateComponent implements OnInit {
 
     onSubmit(): void {
         if (this.createForm.valid) {
-            this.taskService.createTask(this.createForm.value).subscribe({
+            const taskData = this.createForm.value;
+
+            // Capture User OID
+            const account = this.authService.instance.getActiveAccount();
+            if (account?.idTokenClaims && account.idTokenClaims['oid']) {
+                taskData.CreatedBy_AD_OID = account.idTokenClaims['oid'];
+            }
+
+            this.taskService.createTask(taskData).subscribe({
                 next: () => {
                     // Redirect to View All
                     this.router.navigate(['/tasks/list']);

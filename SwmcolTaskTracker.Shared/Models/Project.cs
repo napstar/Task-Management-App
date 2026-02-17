@@ -17,8 +17,8 @@ namespace SwmcolTaskTracker.Shared.Models
 
         public bool IsActive { get; set; } = true;
 
-        // [MaxLength(100)]
-        // public string? ProjectLeadAdOid { get; set; }
+        [MaxLength(100)]
+        public string? ProjectLeadAdOid { get; set; }
 
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }

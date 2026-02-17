@@ -5,6 +5,8 @@ import { Router, ActivatedRoute, RouterModule } from '@angular/router';
 import { ProjectService } from '../../../services/project.service';
 import { Project } from '../../../models/project.model';
 
+import { MsalService } from '@azure/msal-angular';
+
 @Component({
     selector: 'app-edit-project',
     standalone: true,
@@ -17,6 +19,7 @@ export class EditProjectComponent implements OnInit {
     private projectService = inject(ProjectService);
     private router = inject(Router);
     private route = inject(ActivatedRoute);
+    private authService = inject(MsalService);
 
     editForm: FormGroup;
     projectId!: number;
@@ -44,10 +47,20 @@ export class EditProjectComponent implements OnInit {
     loadProject(id: number): void {
         this.projectService.getProjectById(id).subscribe({
             next: (project: Project) => {
+                let leadEmail = project.projectLeadAdOid;
+
+                // Ensure non-null lead email
+                if (!leadEmail) {
+                    const account = this.authService.instance.getActiveAccount();
+                    if (account?.username) {
+                        leadEmail = account.username;
+                    }
+                }
+
                 this.editForm.patchValue({
                     projectName: project.projectName,
                     description: project.description,
-                    projectLeadAdOid: project.projectLeadAdOid,
+                    projectLeadAdOid: leadEmail,
                     isActive: project.isActive
                 });
                 this.isLoading = false;

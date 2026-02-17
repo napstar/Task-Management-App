@@ -78,19 +78,11 @@ var allowedOrigins = new List<string>
 //{
 //    allowedOrigins.Add("https://red-sky-00bb6ae0f1.azurestaticapps.net");
 //}
-if (builder.Environment.IsDevelopment())
-{
-    builder.Services.AddAuthentication("DevBypass")
-        .AddScheme<AuthenticationSchemeOptions, SwmcolTaskTracker.API.Auth.DevBypassAuthHandler>("DevBypass", null);
-}
-else
-{
+    // 2. AUTHENTICATION
+    // Always use Azure AD Authentication (no dev bypass)
+    // Removed downstream API calls to avoid needing ClientSecret in dev environment
     builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
-        .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"))
-        .EnableTokenAcquisitionToCallDownstreamApi()
-        .AddMicrosoftGraph(builder.Configuration.GetSection("MicrosoftGraph"))
-        .AddInMemoryTokenCaches();
-}
+        .AddMicrosoftIdentityWebApi(builder.Configuration.GetSection("AzureAd"));
 
 builder.Services.AddCors(options =>
 {

@@ -1,4 +1,4 @@
-import { ApplicationConfig, importProvidersFrom } from '@angular/core';
+import { ApplicationConfig, importProvidersFrom, APP_INITIALIZER } from '@angular/core';
 import { provideRouter } from '@angular/router';
 import { provideHttpClient, withInterceptorsFromDi } from '@angular/common/http';
 import { provideCharts, withDefaultRegisterables } from 'ng2-charts';
@@ -36,11 +36,16 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   const protectedResourceMap = new Map<string, Array<string>>();
   protectedResourceMap.set(protectedResources.api.endpoint, protectedResources.api.scopes);
   protectedResourceMap.set('https://localhost:7197/api', protectedResources.api.scopes);
+  protectedResourceMap.set('/api', protectedResources.api.scopes); // Match relative path used by proxy
 
   return {
     interactionType: InteractionType.Redirect,
     protectedResourceMap
   };
+}
+
+export function MsalInitializerFactory(msalService: MsalService) {
+  return () => msalService.instance.initialize();
 }
 
 export const appConfig: ApplicationConfig = {
@@ -67,7 +72,13 @@ export const appConfig: ApplicationConfig = {
     },
     MsalService,
     MsalGuard,
-    MsalBroadcastService
+    MsalBroadcastService,
+    {
+      provide: APP_INITIALIZER,
+      useFactory: MsalInitializerFactory,
+      deps: [MsalService],
+      multi: true
+    }
   ]
 };
 

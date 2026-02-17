@@ -68,13 +68,22 @@ namespace SwmcolTaskTracker.API.Controllers
         [HttpPost]
         public async Task<ActionResult<TaskItem>> PostTaskItem(TaskItem taskItem)
         {
+            // Auto-populate ProjectName if ProjectId is provided
+            if (taskItem.ProjectId.HasValue)
+            {
+                var project = await _context.Projects.FindAsync(taskItem.ProjectId.Value);
+                if (project != null)
+                {
+                    taskItem.ProjectName = project.ProjectName;
+                }
+            }
+
             _context.Tasks.Add(taskItem);
             await _context.SaveChangesAsync();
 
             return CreatedAtAction("GetTaskItem", new { id = taskItem.TaskId }, taskItem);
         }
 
-        // PUT: api/Tasks/5
         // PUT: api/Tasks/5
         [HttpPut("{id}")]
         public async Task<IActionResult> PutTaskItem(int id, TaskItem taskItem)
@@ -85,6 +94,23 @@ namespace SwmcolTaskTracker.API.Controllers
             var existingTask = await _context.Tasks.FindAsync(id);
             if (existingTask == null)
                 return NotFound();
+            
+            // Auto-populate ProjectName if ProjectId is provided
+            // This ensures the denormalized ProjectName column stays in sync
+            if (taskItem.ProjectId.HasValue)
+            {
+                // Only query if it changed or if Name is missing
+                // Ideally, just always refresh it to be safe
+                var project = await _context.Projects.FindAsync(taskItem.ProjectId.Value);
+                if (project != null)
+                {
+                    taskItem.ProjectName = project.ProjectName;
+                }
+            }
+            else
+            {
+                taskItem.ProjectName = null;
+            }
 
             // ------------------------------------------------------------
             // AUTO-MAP ONLY CHANGED PROPERTIES USING EF CORE + REFLECTION

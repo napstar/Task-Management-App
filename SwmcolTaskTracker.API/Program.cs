@@ -117,10 +117,31 @@ using (var scope = app.Services.CreateScope())
     }
 }
 
-app.UseHttpsRedirection();
 app.UseCors("AllowClient");
+
+// Global exception handler — catches unhandled exceptions AFTER CORS middleware
+// has already added headers, preventing IIS from stripping Access-Control-Allow-Origin
+app.UseExceptionHandler(errorApp =>
+{
+    errorApp.Run(async context =>
+    {
+        context.Response.StatusCode = 500;
+        context.Response.ContentType = "application/json";
+        var error = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
+        var ex = error?.Error;
+        var logger = context.RequestServices.GetService<ILoggerFactory>()?.CreateLogger("GlobalExceptionHandler");
+        logger?.LogError(ex, "Unhandled exception on {Path}", context.Request.Path);
+        await context.Response.WriteAsJsonAsync(new
+        {
+            message = "An internal server error occurred.",
+            detail = app.Environment.IsDevelopment() ? ex?.Message : null
+        });
+    });
+});
+
+app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
-app.MapControllers();
+app.MapControllers().RequireCors("AllowClient");
 
 app.Run();

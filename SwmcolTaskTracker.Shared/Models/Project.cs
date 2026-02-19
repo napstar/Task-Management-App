@@ -20,6 +20,14 @@ namespace SwmcolTaskTracker.Shared.Models
         [MaxLength(100)]
         public string? ProjectLeadAdOid { get; set; }
 
+        [Column("project_Owner")]
+        [MaxLength(100)]
+        public string? ProjectOwnerId { get; set; }
+
+        [Column("project_Owner_Email")]
+        [MaxLength(200)]
+        public string? ProjectOwnerEmail { get; set; }
+
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
     }
 }

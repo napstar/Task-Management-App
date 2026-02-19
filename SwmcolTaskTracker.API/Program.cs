@@ -129,8 +129,10 @@ app.UseExceptionHandler(errorApp =>
         context.Response.ContentType = "application/json";
         var error = context.Features.Get<Microsoft.AspNetCore.Diagnostics.IExceptionHandlerFeature>();
         var ex = error?.Error;
+        
         var logger = context.RequestServices.GetService<ILoggerFactory>()?.CreateLogger("GlobalExceptionHandler");
         logger?.LogError(ex, "Unhandled exception on {Path}", context.Request.Path);
+        
         await context.Response.WriteAsJsonAsync(new
         {
             message = "An internal server error occurred.",

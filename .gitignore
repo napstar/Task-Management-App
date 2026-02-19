@@ -34,3 +34,6 @@ api_logs.zip
 api-deploy*.zip
 functions-deploy.zip
 
+
+# Publish output
+**/publish/

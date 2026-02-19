@@ -1,39 +1,38 @@
 import { Injectable, inject } from '@angular/core';
 import { HttpClient } from '@angular/common/http';
-import { Observable } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { UserRoleAssignment } from '../models/user.models';
+import { Observable, map } from 'rxjs';
 import { MsalService } from '@azure/msal-angular';
+
+export interface GraphUser {
+    id: string;
+    displayName: string;
+    mail: string; // Often null for guest users
+    userPrincipalName: string; // The email-like ID
+}
+
+interface GraphResponse {
+    value: GraphUser[];
+}
 
 @Injectable({
     providedIn: 'root'
 })
 export class UserService {
     private http = inject(HttpClient);
-    private msalService = inject(MsalService);
-    private apiUrl = 'api/users'; // Base API URL
+    private authService = inject(MsalService);
+    private graphUrl = 'https://graph.microsoft.com/v1.0/users';
 
-    /**
-     * Retrieves the currently logged-in user account from MSAL.
-     */
     getCurrentUser() {
-        const accounts = this.msalService.instance.getAllAccounts();
-        if (accounts.length > 0) {
-            return accounts[0];
-        }
-        return null;
+        return this.authService.instance.getActiveAccount();
     }
 
-    /**
-     * Retrieves the role names for a specific user based on their AD OID.
-     * Useful for permission checks (e.g. roles.includes('Admin')).
-     * @param oid The Azure AD Object ID of the user
-     * @returns An Observable of string array containing role names
-     */
-    getUserRoles(oid: string): Observable<string[]> {
-        return this.http.get<UserRoleAssignment[]>(`${this.apiUrl}/${oid}/roles`).pipe(
-            map(assignments => assignments.map(a => a.roleName || ''))
+    searchUsers(query: string): Observable<GraphUser[]> {
+        // Filter by displayName starts with query
+        // Selecting only needed fields to keep payload small
+        const url = `${this.graphUrl}?$filter=startswith(displayName,'${query}')&$select=id,displayName,mail,userPrincipalName&$top=10`;
+
+        return this.http.get<GraphResponse>(url).pipe(
+            map(response => response.value)
         );
     }
 }
-

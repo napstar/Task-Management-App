@@ -37,6 +37,7 @@ export function MSALInterceptorConfigFactory(): MsalInterceptorConfiguration {
   protectedResourceMap.set(protectedResources.api.endpoint, protectedResources.api.scopes);
   protectedResourceMap.set('https://localhost:7197/api', protectedResources.api.scopes);
   protectedResourceMap.set('/api', protectedResources.api.scopes); // Match relative path used by proxy
+  protectedResourceMap.set(protectedResources.graph.endpoint, protectedResources.graph.scopes);
 
   return {
     interactionType: InteractionType.Redirect,

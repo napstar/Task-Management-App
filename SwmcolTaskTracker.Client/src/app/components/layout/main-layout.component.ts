@@ -1,6 +1,7 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
 import { CommonModule } from '@angular/common';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { MsalService } from '@azure/msal-angular';
 
 @Component({
     selector: 'app-main-layout',
@@ -9,9 +10,24 @@ import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
     templateUrl: './main-layout.component.html',
     styles: []
 })
-export class MainLayoutComponent {
+export class MainLayoutComponent implements OnInit {
     isTasksMenuOpen = true; // Default open for visibility/convenience
     isProjectsMenuOpen = true;
+
+    userName: string = 'User';
+    userEmail: string = '';
+    userInitials: string = 'U';
+
+    private authService = inject(MsalService);
+
+    ngOnInit(): void {
+        const account = this.authService.instance.getActiveAccount();
+        if (account) {
+            this.userName = account.name || 'User';
+            this.userEmail = account.username || '';
+            this.userInitials = this.userName.charAt(0).toUpperCase();
+        }
+    }
 
     toggleTasksMenu() {
         this.isTasksMenuOpen = !this.isTasksMenuOpen;
@@ -19,5 +35,9 @@ export class MainLayoutComponent {
 
     toggleProjectsMenu() {
         this.isProjectsMenuOpen = !this.isProjectsMenuOpen;
+    }
+
+    logout() {
+        this.authService.logoutRedirect();
     }
 }

@@ -41,9 +41,13 @@ export const protectedResources = {
     api: {
         endpoint: "https://app-swmcol-task-mgmt-api.azurewebsites.net/api",
         scopes: ["api://8105c32b-15b0-41bd-9245-0e92a81d1e4c/access_as_user"]
+    },
+    graph: {
+        endpoint: "https://graph.microsoft.com/v1.0",
+        scopes: ["User.Read", "User.ReadBasic.All"]
     }
 };
 
 export const loginRequest = {
-    scopes: ["User.Read", ...protectedResources.api.scopes]
+    scopes: [...protectedResources.graph.scopes, ...protectedResources.api.scopes]
 };

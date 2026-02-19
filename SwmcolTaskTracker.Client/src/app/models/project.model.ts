@@ -4,5 +4,7 @@ export interface Project {
     description?: string;
     isActive: boolean;
     projectLeadAdOid?: string;
+    projectOwnerId?: string;
+    projectOwnerEmail?: string;
     createdAt?: Date;
 }
